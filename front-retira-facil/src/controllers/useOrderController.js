@@ -3,13 +3,10 @@ import { createOrder, getOrders, updateOrderStatus } from "../api/orderService";
 
 export function useOrderController() {
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(false);
 
   async function fetchOrders() {
-    setLoading(true);
     const response = await getOrders();
     setOrders(response.data);
-    setLoading(false);
   }
 
   async function createNewOrder(orderData) {
@@ -22,7 +19,6 @@ export function useOrderController() {
 
   return {
     orders,
-    loading,
     fetchOrders,
     createNewOrder,
     changeStatus,

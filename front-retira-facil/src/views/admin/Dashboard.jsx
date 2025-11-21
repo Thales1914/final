@@ -2,21 +2,39 @@ import { Link } from "react-router-dom";
 
 export default function Dashboard() {
   return (
-    <div className="container py-4">
-      <h2 className="mb-4">Painel Administrativo</h2>
+    <div className="container page-area fade-in">
 
-      <div className="list-group">
-        <Link to="/admin/pedidos" className="list-group-item list-group-item-action">
-          Gerenciar Pedidos
-        </Link>
+      <h2 className="section-title mb-4">Painel Administrativo</h2>
 
-        <Link to="/admin/produtos" className="list-group-item list-group-item-action">
-          Gerenciar Produtos
-        </Link>
+      <div className="row g-4">
 
-        <Link to="/admin/horarios" className="list-group-item list-group-item-action">
-          Gerenciar Horários de Retirada
-        </Link>
+        <div className="col-md-4">
+          <div className="card-custom text-center">
+            <h5>Gerenciar Produtos</h5>
+            <Link to="/admin/produtos" className="btn btn-primary w-100 mt-3">
+              Acessar
+            </Link>
+          </div>
+        </div>
+
+        <div className="col-md-4">
+          <div className="card-custom text-center">
+            <h5>Gerenciar Horários</h5>
+            <Link to="/admin/horarios" className="btn btn-primary w-100 mt-3">
+              Acessar
+            </Link>
+          </div>
+        </div>
+
+        <div className="col-md-4">
+          <div className="card-custom text-center">
+            <h5>Gerenciar Pedidos</h5>
+            <Link to="/admin/pedidos" className="btn btn-primary w-100 mt-3">
+              Acessar
+            </Link>
+          </div>
+        </div>
+
       </div>
     </div>
   );

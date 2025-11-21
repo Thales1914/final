@@ -1,5 +1,237 @@
+/* ----------------------------------------------------
+   GLOBAL DESIGN — TEMA AZUL CORPORATE
+-----------------------------------------------------*/
+
+/* Fonte moderna */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 body {
-  background-color: #f7f7f7;
+  font-family: "Inter", sans-serif;
+  background: #f4f7fb;
   margin: 0;
   padding: 0;
+  color: #1f1f1f;
+}
+
+/* Títulos */
+h1, h2, h3, h4, h5 {
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+/* Containers */
+.container {
+  max-width: 1150px;
+  padding-top: 20px;
+}
+
+/* ----------------------------------------------------
+   NAVBAR
+-----------------------------------------------------*/
+
+.navbar {
+  padding: 14px 30px !important;
+  background: #0d6efd !important;
+  box-shadow: 0px 2px 8px rgba(0,0,0,0.12);
+}
+
+.navbar-brand {
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+
+.nav-link {
+  font-size: 1rem;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.nav-link:hover {
+  opacity: 1;
+}
+
+/* Navbar mobile fix */
+.collapse.navbar-collapse {
+  justify-content: space-between;
+}
+
+/* ----------------------------------------------------
+   FOOTER
+-----------------------------------------------------*/
+
+.footer {
+  text-align: center;
+  color: #777;
+  font-size: 0.9rem;
+  padding: 20px 0;
+  margin-top: 40px;
+}
+
+/* ----------------------------------------------------
+   CARDS CORPORATE
+-----------------------------------------------------*/
+
+.card-custom {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 25px;
+  border: none;
+  box-shadow: 0px 3px 12px rgba(0,0,0,0.08);
+  margin-bottom: 22px;
+}
+
+/* ----------------------------------------------------
+   TABELAS
+-----------------------------------------------------*/
+
+.table {
+  border-radius: 10px;
+  overflow: hidden;
+  background: white;
+  border: none !important;
+}
+
+.table thead {
+  background: #e9eef5;
+}
+
+.table thead th {
+  font-weight: 600;
+  color: #2a2a2a;
+}
+
+.table tbody tr:hover {
+  background: #f6f9fc !important;
+}
+
+.table td {
+  padding: 14px 18px !important;
+}
+
+/* ----------------------------------------------------
+   FORMULÁRIOS E INPUTS
+-----------------------------------------------------*/
+
+.form-control {
+  padding: 10px 12px !important;
+  border-radius: 8px !important;
+  border: 1px solid #d2d6db !important;
+  transition: 0.2s ease-in-out;
+}
+
+.form-control:focus {
+  border-color: #0d6efd !important;
+  box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25) !important;
+}
+
+label {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+/* ----------------------------------------------------
+   BUTTONS
+-----------------------------------------------------*/
+
+.btn {
+  font-weight: 500;
+  border-radius: 8px !important;
+  padding: 8px 16px !important;
+}
+
+.btn-sm {
+  padding: 6px 10px !important;
+  font-size: 0.85rem;
+}
+
+.btn-primary {
+  background: #0d6efd !important;
+  border-color: #0d6efd !important;
+}
+
+.btn-primary:hover {
+  background: #0b5ed7 !important;
+}
+
+.btn-success {
+  background: #198754 !important;
+  border-color: #198754 !important;
+}
+.btn-success:hover {
+  background: #157347 !important;
+}
+
+.btn-danger {
+  background: #dc3545 !important;
+  border-color: #dc3545 !important;
+}
+.btn-danger:hover {
+  background: #bb2d3b !important;
+}
+
+.btn-light {
+  border: 1px solid #ccc !important;
+}
+
+/* ----------------------------------------------------
+   ESPAÇAMENTO E LAYOUT
+-----------------------------------------------------*/
+
+.page-area {
+  padding-top: 25px;
+  padding-bottom: 25px;
+}
+
+.section-title {
+  font-size: 1.6rem;
+  margin-bottom: 22px;
+}
+
+.card-custom + .card-custom {
+  margin-top: 25px;
+}
+
+/* ----------------------------------------------------
+   ANIMAÇÃO
+-----------------------------------------------------*/
+
+.fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ----------------------------------------------------
+   RESPONSIVIDADE FINAL
+-----------------------------------------------------*/
+
+@media (max-width: 768px) {
+  .card-custom {
+    padding: 20px !important;
+  }
+
+  .btn-sm {
+    width: 100%;
+  }
+
+  .table {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .section-title {
+    font-size: 1.3rem;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
 }

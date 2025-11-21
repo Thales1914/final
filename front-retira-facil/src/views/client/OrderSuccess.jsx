@@ -2,16 +2,18 @@ import { Link } from "react-router-dom";
 
 export default function OrderSuccess() {
   return (
-    <div className="container text-center py-5">
-      <h2 className="text-success fw-bold">Pedido realizado com sucesso!</h2>
+    <div className="container page-area text-center fade-in">
+      <div className="card-custom">
+        <h2 className="mb-3">Pedido realizado com sucesso!</h2>
 
-      <p className="mt-3">
-        Seu pedido foi registrado. Aguarde o e-mail de confirmação quando estiver pronto para retirada.
-      </p>
+        <p className="lead mb-4">
+          Seu pedido foi registrado e estará pronto para retirada no horário escolhido.
+        </p>
 
-      <Link to="/" className="btn btn-primary mt-3">
-        Voltar ao início
-      </Link>
+        <Link to="/" className="btn btn-primary">
+          Voltar ao início
+        </Link>
+      </div>
     </div>
   );
 }

@@ -1,34 +1,55 @@
 import { useEffect } from "react";
 import { useScheduleController } from "../../controllers/useScheduleController";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../../context/CartContext";
 
 export default function SelectSchedule() {
-  const { schedules, fetchAvailableSchedules } = useScheduleController();
+  const { schedules, fetchSchedules } = useScheduleController();
   const navigate = useNavigate();
+  const { setSchedule } = useCart();
 
   useEffect(() => {
-    fetchAvailableSchedules();
+    fetchSchedules();
   }, []);
 
-  function escolher(slot) {
-    localStorage.setItem("selectedSlot", JSON.stringify(slot));
+  function escolher(horario) {
+    setSchedule(horario);
     navigate("/checkout");
   }
 
   return (
-    <div className="container py-4">
-      <h2 className="mb-4">Escolha o horário de retirada</h2>
+    <div className="container page-area fade-in">
+      <h2 className="section-title">Selecione um Horário</h2>
 
-      <div className="list-group">
-        {schedules.map((slot) => (
-          <button
-            key={slot.id}
-            className="list-group-item list-group-item-action"
-            onClick={() => escolher(slot)}
-          >
-            <strong>{slot.date}</strong> — {slot.time}
-          </button>
-        ))}
+      <div className="card-custom">
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Horário</th>
+              <th>Disponíveis</th>
+              <th></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {schedules.map((h) => (
+              <tr key={h.id}>
+                <td>{h.date}</td>
+                <td>{h.time}</td>
+                <td>{h.available}</td>
+                <td>
+                  <button
+                    className="btn btn-primary btn-sm"
+                    onClick={() => escolher(h)}
+                  >
+                    Escolher
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

@@ -13,24 +13,18 @@ export function useAuthController() {
       const response = await loginAdmin({ username, password });
 
       const token = response.data.token;
-      localStorage.setItem("token", token);
 
-      return true;
+      return token; // RETORNAR O TOKEN AQUI !!!
     } catch (err) {
       setError("Usuário ou senha inválidos");
-      return false;
+      return null;
     } finally {
       setLoading(false);
     }
   }
 
-  function logout() {
-    localStorage.removeItem("token");
-  }
-
   return {
     login,
-    logout,
     loading,
     error,
   };

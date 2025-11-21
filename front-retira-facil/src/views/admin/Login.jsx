@@ -16,9 +16,12 @@ export default function Login() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const success = await login(form.username, form.password);
-    if (success) {
-      saveToken(localStorage.getItem("token"));
+    
+    // chama o backend
+    const token = await login(form.username, form.password);
+
+    if (token) {
+      saveToken(token); // SALVA O TOKEN CERTO
       navigate("/admin/dashboard");
     }
   }
