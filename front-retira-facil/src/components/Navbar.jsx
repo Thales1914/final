@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 
 export default function Navbar() {
   const { isAuthenticated, logout } = useAuth();
+  const { cart } = useCart();
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-3">
@@ -20,6 +22,14 @@ export default function Navbar() {
         </ul>
 
         <ul className="navbar-nav ms-auto">
+
+          {/* Link simples para o carrinho */}
+          <li className="nav-item">
+            <Link className="nav-link" to="/checkout">
+              Carrinho ({cart.length})
+            </Link>
+          </li>
+
           {!isAuthenticated ? (
             <li className="nav-item">
               <Link className="nav-link" to="/admin/login">

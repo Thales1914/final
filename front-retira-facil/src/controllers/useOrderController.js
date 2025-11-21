@@ -9,7 +9,8 @@ export function useOrderController() {
     setOrders(response.data);
   }
 
-  async function createNewOrder(orderData) {
+  // 🔥 Nome corrigido — agora o Checkout encontra a função
+  async function createOrderController(orderData) {
     return await createOrder(orderData);
   }
 
@@ -20,7 +21,7 @@ export function useOrderController() {
   return {
     orders,
     fetchOrders,
-    createNewOrder,
+    createOrder: createOrderController, // ⬅ AQUI O SEGREDO
     changeStatus,
   };
 }

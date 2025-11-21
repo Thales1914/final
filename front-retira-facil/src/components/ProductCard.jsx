@@ -1,28 +1,28 @@
-export default function ProductCard({ product, onAdd }) {
+import { useCart } from "../context/CartContext";
+
+export default function ProductCard({ product }) {
+  const { addToCart } = useCart();
+
   return (
-    <div className="card shadow-sm h-100">
-      {product.imageUrl && (
-        <img
-          src={product.imageUrl}
-          className="card-img-top"
-          alt={product.name}
-        />
-      )}
+    <div className="card-custom p-3">
+      <img
+        src={product.imageUrl}
+        alt={product.name}
+        className="img-fluid rounded mb-3"
+        style={{ maxHeight: "180px", objectFit: "cover" }}
+      />
 
-      <div className="card-body">
-        <h5 className="card-title">{product.name}</h5>
-        <p className="text-muted">{product.category}</p>
-        <p className="card-text">{product.description}</p>
+      <h5>{product.name}</h5>
+      <small className="text-muted">{product.category}</small>
 
-        <h4 className="text-primary fw-bold">R$ {product.price}</h4>
+      <p className="mt-2 fw-bold">R$ {product.price}</p>
 
-        <button
-          className="btn btn-primary w-100 mt-2"
-          onClick={() => onAdd(product)}
-        >
-          Adicionar ao carrinho
-        </button>
-      </div>
+      <button
+        className="btn btn-primary w-100 mt-3"
+        onClick={() => addToCart(product)}
+      >
+        Adicionar ao carrinho
+      </button>
     </div>
   );
 }
