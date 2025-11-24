@@ -4,7 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const { login, loading, error } = useAuthController();
+  const { login: apiLogin, loading } = useAuthController();
   const { login: saveToken } = useAuth();
   const navigate = useNavigate();
 
@@ -16,13 +16,30 @@ export default function Login() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    
-    // chama o backend
-    const token = await login(form.username, form.password);
 
-    if (token) {
-      saveToken(token); // SALVA O TOKEN CERTO
-      navigate("/admin/dashboard");
+    if (!form.username.trim()) {
+      alert("O campo usuário é obrigatório.");
+      return;
+    }
+
+    if (!form.password.trim()) {
+      alert("O campo senha é obrigatório.");
+      return;
+    }
+
+    try {
+      const token = await apiLogin(form.username, form.password);
+
+      if (token) {
+        saveToken(token);
+        navigate("/admin/dashboard");
+      } else {
+        alert("Usuário ou senha inválidos.");
+      }
+
+    } catch (err) {
+      alert("Erro ao fazer login.");
+      console.error(err);
     }
   }
 
@@ -31,12 +48,14 @@ export default function Login() {
       <h2 className="mb-4">Login Admin</h2>
 
       <form onSubmit={handleSubmit}>
+
         <div className="mb-3">
           <label>Usuário</label>
           <input
             className="form-control"
             name="username"
             onChange={handleChange}
+            disabled={loading}
           />
         </div>
 
@@ -47,10 +66,9 @@ export default function Login() {
             className="form-control"
             name="password"
             onChange={handleChange}
+            disabled={loading}
           />
         </div>
-
-        {error && <p className="text-danger">{error}</p>}
 
         <button className="btn btn-primary w-100" disabled={loading}>
           {loading ? "Entrando..." : "Entrar"}

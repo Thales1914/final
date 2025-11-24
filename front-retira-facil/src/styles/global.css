@@ -89,6 +89,7 @@ h1, h2, h3, h4, h5 {
   overflow: hidden;
   background: white;
   border: none !important;
+  border-collapse: collapse !important;
 }
 
 .table thead {
@@ -100,12 +101,54 @@ h1, h2, h3, h4, h5 {
   color: #2a2a2a;
 }
 
-.table tbody tr:hover {
+/* Remove todas as bordas internas */
+.table tr,
+.table td,
+.table th {
+  border: none !important;
+}
+
+.table tbody tr:hover td {
   background: #f6f9fc !important;
+  border: none !important;
 }
 
 .table td {
   padding: 14px 18px !important;
+}
+
+/* ----------------------------------------------------
+   ESTILO ESPECIAL PARA PEDIDOS
+-----------------------------------------------------*/
+
+.order-items-row td {
+  background: #f8f9fa !important;
+  padding: 16px 20px !important;
+  border-top: 1px solid #e3e6ea !important;
+  border-bottom: 1px solid #e3e6ea !important;
+}
+
+.order-items-title {
+  font-size: 0.92rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.order-items-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.order-items-list li {
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+}
+
+.order-divider-row td {
+  padding: 0 !important;
+  background: transparent !important;
+  height: 10px !important;
 }
 
 /* ----------------------------------------------------
@@ -225,6 +268,7 @@ label {
 @media (max-width: 576px) {
   .section-title {
     font-size: 1.3rem;
+    margin-bottom: 20px;
   }
 
   .btn {

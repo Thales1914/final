@@ -8,16 +8,14 @@ export function CartProvider({ children }) {
 
   function addToCart(product) {
     setCart((prev) => {
-      const existing = prev.find((item) => item.id === product.id);
-
-      if (existing) {
+      const exists = prev.find((item) => item.id === product.id);
+      if (exists) {
         return prev.map((item) =>
           item.id === product.id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       }
-
       return [...prev, { ...product, quantity: 1 }];
     });
   }
@@ -26,14 +24,13 @@ export function CartProvider({ children }) {
     setCart((prev) => prev.filter((item) => item.id !== id));
   }
 
-  // 🔥 NECESSÁRIO PARA ESCOLHER HORÁRIO
-  function selectSchedule(s) {
-    setSchedule(s);
-  }
-
   function clearCart() {
     setCart([]);
     setSchedule(null);
+  }
+
+  function selectSchedule(schedule) {
+    setSchedule(schedule);
   }
 
   return (
@@ -42,9 +39,9 @@ export function CartProvider({ children }) {
         cart,
         addToCart,
         removeFromCart,
-        schedule,
-        selectSchedule, // 🔥 EXPORTANDO
         clearCart,
+        schedule,
+        selectSchedule,
       }}
     >
       {children}

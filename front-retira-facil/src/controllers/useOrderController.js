@@ -5,23 +5,36 @@ export function useOrderController() {
   const [orders, setOrders] = useState([]);
 
   async function fetchOrders() {
-    const response = await getOrders();
-    setOrders(response.data);
+    try {
+      const response = await getOrders();
+      setOrders(response.data);
+    } catch (err) {
+      alert(err.response?.data?.error || "Erro ao carregar pedidos.");
+    }
   }
 
-  // 🔥 Nome corrigido — agora o Checkout encontra a função
+  // Corrigido + tratamento de erro
   async function createOrderController(orderData) {
-    return await createOrder(orderData);
+    try {
+      return await createOrder(orderData);
+    } catch (err) {
+      alert(err.response?.data?.error || "Erro ao criar pedido.");
+      throw err; // mantém erro para o componente parar fluxo se quiser
+    }
   }
 
   async function changeStatus(orderId, status) {
-    return await updateOrderStatus(orderId, status);
+    try {
+      return await updateOrderStatus(orderId, status);
+    } catch (err) {
+      alert(err.response?.data?.error || "Erro ao atualizar status.");
+    }
   }
 
   return {
     orders,
     fetchOrders,
-    createOrder: createOrderController, // ⬅ AQUI O SEGREDO
+    createOrder: createOrderController,
     changeStatus,
   };
 }

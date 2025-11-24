@@ -1,15 +1,20 @@
 const Product = require("../models/Product");
+const { Op } = require("sequelize");
 
 module.exports = {
+  // Catálogo (cliente) → só produtos ativos e com estoque disponível
   listar() {
     return Product.findAll({
-      where: { active: true },
+      where: {
+        active: true,
+        stock: { [Op.gt]: 0 }, // ✔ só mostra produtos com estoque > 0
+      },
       order: [["name", "ASC"]],
     });
   },
 
+  // Admin → vê tudo (inclusive esgotados e inativos)
   listarTodos() {
-    // para o admin ver até inativos
     return Product.findAll({
       order: [["name", "ASC"]],
     });

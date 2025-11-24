@@ -3,39 +3,69 @@ import api from "../api/api";
 
 export function useScheduleController() {
   const [schedules, setSchedules] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // 🔵 ADMIN → lista todos os horários (com capacidade e pedidos)
-  async function fetchSchedulesAdmin() {
-    const res = await api.get("/schedules/admin");
-    setSchedules(res.data);
-  }
-
-  // 🟢 CLIENTE → lista somente horários disponíveis
-  // ESTA FUNÇÃO ESTAVA FALTANDO (causando erro no seu front)
+  // CLIENTE → Listar horários disponíveis
   async function fetchSchedulesClient() {
-    const res = await api.get("/schedules"); // rota correta do backend
-    setSchedules(res.data);
+    setLoading(true);
+    try {
+      const res = await api.get("/schedules");
+      setSchedules(res.data);
+    } catch (err) {
+      alert(err.response?.data?.error || "Erro ao carregar horários.");
+    } finally {
+      setLoading(false);
+    }
   }
 
-  // 🔵 ADMIN → criar horário
+  // ADMIN → Listar todos os horários
+  async function fetchSchedulesAdmin() {
+    setLoading(true);
+    try {
+      const res = await api.get("/schedules/admin");
+      setSchedules(res.data);
+    } catch (err) {
+      alert(err.response?.data?.error || "Erro ao carregar horários do admin.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // ADMIN → Criar horário
   async function createSchedule(data) {
-    await api.post("/schedules", data);
+    try {
+      await api.post("/schedules", data);
+    } catch (err) {
+      alert(err.response?.data?.error || "Erro ao criar horário.");
+      throw err;
+    }
   }
 
-  // 🔵 ADMIN → atualizar horário
+  // ADMIN → Atualizar horário
   async function updateSchedule(id, data) {
-    await api.put(`/schedules/${id}`, data);
+    try {
+      await api.put(`/schedules/${id}`, data);
+    } catch (err) {
+      alert(err.response?.data?.error || "Erro ao atualizar horário.");
+      throw err;
+    }
   }
 
-  // 🔵 ADMIN → deletar horário
+  // ADMIN → Deletar horário
   async function deleteSchedule(id) {
-    await api.delete(`/schedules/${id}`);
+    try {
+      await api.delete(`/schedules/${id}`);
+    } catch (err) {
+      alert(err.response?.data?.error || "Erro ao deletar horário.");
+      throw err;
+    }
   }
 
   return {
     schedules,
+    loading,
+    fetchSchedulesClient,
     fetchSchedulesAdmin,
-    fetchSchedulesClient, // 🔥 obrigado para o front funcionar
     createSchedule,
     updateSchedule,
     deleteSchedule,

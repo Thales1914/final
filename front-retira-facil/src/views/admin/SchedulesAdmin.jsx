@@ -10,6 +10,8 @@ export default function SchedulesAdmin() {
     deleteSchedule,
   } = useScheduleController();
 
+  const [loading, setLoading] = useState(false);
+
   const [form, setForm] = useState({
     id: null,
     date: "",
@@ -46,20 +48,48 @@ export default function SchedulesAdmin() {
   async function salvar(e) {
     e.preventDefault();
 
+    if (!form.date) return alert("A data é obrigatória.");
+    if (!form.time) return alert("O horário é obrigatório.");
+    if (!form.capacity || Number(form.capacity) <= 0)
+      return alert("A capacidade deve ser maior que 0.");
+
     const data = {
       date: form.date,
       time: form.time,
       capacity: Number(form.capacity),
     };
 
-    if (form.id) {
-      await updateSchedule(form.id, data);
-    } else {
-      await createSchedule(data);
-    }
+    setLoading(true);
+    try {
+      if (form.id) {
+        await updateSchedule(form.id, data);
+      } else {
+        await createSchedule(data);
+      }
 
-    limpar();
-    fetchSchedulesAdmin();
+      limpar();
+      await fetchSchedulesAdmin();
+    } catch (err) {
+      alert("Erro ao salvar horário.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function excluir(id) {
+    if (!confirm("Tem certeza que deseja excluir este horário?")) return;
+
+    setLoading(true);
+    try {
+      await deleteSchedule(id);
+      await fetchSchedulesAdmin();
+    } catch (err) {
+      alert("Erro ao excluir horário.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -69,7 +99,9 @@ export default function SchedulesAdmin() {
 
       {/* FORMULÁRIO */}
       <div className="card-custom">
-        <h4 className="mb-3">{form.id ? "Editar Horário" : "Novo Horário"}</h4>
+        <h4 className="mb-3">
+          {form.id ? "Editar Horário" : "Novo Horário"}
+        </h4>
 
         <form onSubmit={salvar} className="row g-3">
 
@@ -111,8 +143,8 @@ export default function SchedulesAdmin() {
           </div>
 
           <div className="col-12 d-flex gap-2 mt-2">
-            <button className="btn btn-success">
-              {form.id ? "Salvar Alterações" : "Criar Horário"}
+            <button className="btn btn-success" disabled={loading}>
+              {loading ? "Salvando..." : form.id ? "Salvar Alterações" : "Criar Horário"}
             </button>
 
             {form.id && (
@@ -130,7 +162,7 @@ export default function SchedulesAdmin() {
 
       {/* TABELA */}
       <div className="card-custom">
-        <h4 className="mb-3">Horários Existentes</h4>
+        <h4 className="mb-3">Horários Existentes {loading && "(atualizando...)"}</h4>
 
         <table className="table">
           <thead>
@@ -157,15 +189,15 @@ export default function SchedulesAdmin() {
                   <button
                     className="btn btn-primary btn-sm"
                     onClick={() => editar(h)}
+                    disabled={loading}
                   >
                     Editar
                   </button>
 
                   <button
                     className="btn btn-danger btn-sm"
-                    onClick={() =>
-                      deleteSchedule(h.id).then(fetchSchedulesAdmin)
-                    }
+                    onClick={() => excluir(h.id)}
+                    disabled={loading}
                   >
                     Excluir
                   </button>

@@ -1,6 +1,23 @@
 import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Dashboard() {
+  const { token } = useAuth();
+
+  // Previne acesso direto sem login
+  if (!token) {
+    return (
+      <div className="container page-area fade-in">
+        <h3 className="text-danger">Acesso Negado</h3>
+        <p>Você precisa estar logado para acessar o painel.</p>
+
+        <Link to="/admin" className="btn btn-primary mt-3">
+          Ir para Login
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="container page-area fade-in">
 

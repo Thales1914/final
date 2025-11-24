@@ -1,141 +1,133 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useCart } from "../../context/CartContext";
 import { useOrderController } from "../../controllers/useOrderController";
 import { useScheduleController } from "../../controllers/useScheduleController";
 import { useNavigate } from "react-router-dom";
 
 export default function Checkout() {
-  const { cart, schedule, selectSchedule, clearCart } = useCart();
+  const {
+    cart,
+    schedule,
+    removeFromCart,
+    selectSchedule,
+    clearCart
+  } = useCart();
+
+  const { schedules, fetchSchedulesClient } = useScheduleController();
   const { createOrder } = useOrderController();
-  const { fetchSchedulesClient, schedules } = useScheduleController();
   const navigate = useNavigate();
 
-  const [loadingSchedules, setLoadingSchedules] = useState(true);
-
-  // 🔵 Carregar horários do banco ao abrir a página
   useEffect(() => {
-    async function load() {
-      await fetchSchedulesClient();
-      setLoadingSchedules(false);
-    }
-    load();
+    fetchSchedulesClient();
   }, []);
 
-  // 🔴 Se carrinho estiver vazio, redirecionar
-  if (cart.length === 0) {
-    return (
-      <div className="container page-area fade-in">
-        <h2 className="section-title">Seu carrinho está vazio</h2>
-        <button className="btn btn-primary mt-3" onClick={() => navigate("/")}>
-          Voltar aos produtos
-        </button>
-      </div>
-    );
+  function formatarDataBR(date) {
+    if (!date) return "";
+    const [ano, mes, dia] = date.split("-");
+    return `${dia}/${mes}/${ano}`;
   }
 
   async function finalizar(e) {
     e.preventDefault();
 
     if (!schedule) {
-      alert("Por favor, selecione um horário antes de finalizar o pedido.");
+      alert("Selecione um horário antes de finalizar o pedido.");
       return;
     }
 
-    const form = Object.fromEntries(new FormData(e.target));
+    if (cart.length === 0) {
+      alert("Seu carrinho está vazio.");
+      return;
+    }
 
-    const payload = {
-      studentName: form.studentName,
-      registration: form.registration,
-      guardianEmail: form.guardianEmail,
-      pickupSlotId: schedule.id,
-      items: cart.map((item) => ({
-        productId: item.id,
-        quantity: item.quantity,
-      })),
-    };
+    const data = Object.fromEntries(new FormData(e.target));
 
-    await createOrder(payload);
-    clearCart();
-    navigate("/pedido/sucesso");
+    // 🔥 FORMATO EXATO QUE O BACKEND ESPERA
+    data.items = cart.map(item => ({
+      productId: item.id,
+      quantity: item.quantity
+    }));
+
+    data.pickupSlotId = schedule.id;
+
+    try {
+      await createOrder(data);
+      clearCart();
+      navigate("/pedido/sucesso");
+    } catch (err) {
+      console.error("DEBUG ERRO BACKEND:", err.response?.data);
+      alert(err.response?.data?.error || "Erro ao finalizar pedido.");
+    }
   }
 
   return (
     <div className="container page-area fade-in">
 
-      <h2 className="section-title">Carrinho & Checkout</h2>
+      <h2 className="section-title">Finalizar Pedido</h2>
 
-      {/* 🛒 LISTA DE PRODUTOS */}
+      {/* ITENS */}
       <div className="card-custom mb-4">
-        <h4 className="mb-3">Produtos no Carrinho</h4>
+        <h4 className="mb-3">Itens do Carrinho</h4>
+
+        {cart.length === 0 && <p className="text-muted">Seu carrinho está vazio.</p>}
 
         {cart.map((item) => (
-          <div key={item.id} className="d-flex justify-content-between mb-2">
-            <span>{item.name} (x{item.quantity})</span>
-            <span>R$ {Number(item.price).toFixed(2)}</span>
+          <div key={item.id} className="d-flex justify-content-between align-items-center mb-2">
+            <div>
+              {item.name} <span className="text-muted">(x{item.quantity})</span>
+            </div>
+            <div className="d-flex align-items-center gap-3">
+              <span>R$ {Number(item.price).toFixed(2)}</span>
+              <button className="btn btn-danger btn-sm" onClick={() => removeFromCart(item.id)}>
+                Remover
+              </button>
+            </div>
           </div>
         ))}
       </div>
 
-      {/* 🕒 ESCOLHA DE HORÁRIO */}
+      {/* HORÁRIOS */}
       <div className="card-custom mb-4">
-        <h4 className="mb-3">Escolha o Horário de Retirada</h4>
+        <h4 className="mb-3">Selecione um Horário</h4>
 
-        {loadingSchedules && <p>Carregando horários...</p>}
-
-        {!loadingSchedules && schedules.length === 0 && (
-          <p className="text-danger">Nenhum horário disponível no momento.</p>
-        )}
-
-        {!loadingSchedules &&
-          schedules.map((slot) => (
-            <button
-              key={slot.id}
-              className={`btn w-100 mb-2 ${
-                schedule?.id === slot.id ? "btn-success" : "btn-primary"
-              }`}
-              onClick={() => selectSchedule(slot)}
-            >
-              {slot.time} — Disponíveis: {slot.available}
-            </button>
-          ))}
-
-        {schedule && (
-          <p className="mt-2 text-success">
-            Horário selecionado: <strong>{schedule.time}</strong>
-          </p>
-        )}
+        {schedules.map((s) => (
+          <button
+            key={s.id}
+            className={`btn w-100 mb-2 ${schedule?.id === s.id ? "btn-success" : "btn-primary"}`}
+            onClick={() => selectSchedule({ id: s.id, date: s.date, time: s.time })}
+          >
+            {formatarDataBR(s.date)} • {s.time}
+          </button>
+        ))}
       </div>
 
-      {/* 📝 FORMULÁRIO FINAL */}
+      {/* FORMULÁRIO */}
       <div className="card-custom">
-        <h4 className="mb-3">Informações do Aluno</h4>
+        <h4 className="mb-3">Seus Dados</h4>
 
-        <form onSubmit={finalizar} className="row g-3">
+        <form onSubmit={finalizar}>
+          <label>Nome do Aluno</label>
+          <input name="studentName" className="form-control" required />
 
-          <div className="col-md-6">
-            <label className="form-label">Seu Nome</label>
-            <input className="form-control" name="studentName" required />
-          </div>
+          <label className="mt-3">Matrícula</label>
+          <input name="registration" className="form-control" required />
 
-          <div className="col-md-6">
-            <label className="form-label">Matrícula</label>
-            <input className="form-control" name="registration" required />
-          </div>
+          <label className="mt-3">Email do Responsável</label>
+          <input name="guardianEmail" type="email" className="form-control" required />
 
-          <div className="col-md-12">
-            <label className="form-label">Email do Responsável</label>
-            <input className="form-control" name="guardianEmail" required />
-          </div>
+          <label className="mt-3">Horário Selecionado</label>
+          <input
+            className="form-control"
+            readOnly
+            value={schedule ? `${formatarDataBR(schedule.date)} • ${schedule.time}` : "Nenhum horário selecionado"}
+          />
 
-          <button
-            className="btn btn-success mt-3"
-            type="submit"
-            disabled={!schedule}
-          >
+          <button className="btn btn-primary mt-4" type="submit" disabled={!schedule || cart.length === 0}>
             Finalizar Pedido
           </button>
         </form>
       </div>
+
     </div>
   );
 }

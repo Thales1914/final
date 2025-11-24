@@ -10,6 +10,7 @@ export default function ProductsAdmin() {
     deleteExistingProduct,
   } = useProductController();
 
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     id: null,
     name: "",
@@ -52,6 +53,14 @@ export default function ProductsAdmin() {
   async function salvar(e) {
     e.preventDefault();
 
+    if (!form.name.trim()) return alert("O nome é obrigatório.");
+    if (!form.price || Number(form.price) <= 0)
+      return alert("O preço deve ser maior que 0.");
+    if (!form.stock || Number(form.stock) < 0)
+      return alert("O estoque deve ser 0 ou mais.");
+
+    setLoading(true);
+
     const data = {
       name: form.name,
       price: Number(form.price),
@@ -60,20 +69,41 @@ export default function ProductsAdmin() {
       imageUrl: form.imageUrl,
     };
 
-    if (form.id) {
-      await updateExistingProduct(form.id, data);
-    } else {
-      await createNewProduct(data);
-    }
+    try {
+      if (form.id) {
+        await updateExistingProduct(form.id, data);
+      } else {
+        await createNewProduct(data);
+      }
 
-    limpar();
-    fetchProductsAdmin();
+      limpar();
+      await fetchProductsAdmin();
+    } catch (err) {
+      alert("Erro ao salvar o produto.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function excluir(id) {
+    if (!confirm("Tem certeza que deseja excluir este produto?")) return;
+
+    setLoading(true);
+    try {
+      await deleteExistingProduct(id);
+      await fetchProductsAdmin();
+    } catch (err) {
+      alert("Erro ao excluir o produto.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <div className="container page-area fade-in">
 
-      {/* Título */}
       <h2 className="section-title">Gerenciar Produtos</h2>
 
       {/* FORMULÁRIO */}
@@ -83,7 +113,6 @@ export default function ProductsAdmin() {
         </h4>
 
         <form onSubmit={salvar} className="row g-3">
-
           <div className="col-md-6">
             <label className="form-label">Nome</label>
             <input
@@ -141,8 +170,12 @@ export default function ProductsAdmin() {
           </div>
 
           <div className="col-12 d-flex gap-2 mt-2">
-            <button className="btn btn-success">
-              {form.id ? "Salvar Alterações" : "Criar Produto"}
+            <button className="btn btn-success" disabled={loading}>
+              {loading
+                ? "Salvando..."
+                : form.id
+                ? "Salvar Alterações"
+                : "Criar Produto"}
             </button>
 
             {form.id && (
@@ -158,7 +191,7 @@ export default function ProductsAdmin() {
         </form>
       </div>
 
-      {/* LISTA DE PRODUTOS */}
+      {/* LISTA */}
       <div className="card-custom">
         <h4 className="mb-3">Lista de Produtos</h4>
 
@@ -185,15 +218,15 @@ export default function ProductsAdmin() {
                   <button
                     className="btn btn-primary btn-sm"
                     onClick={() => editar(p)}
+                    disabled={loading}
                   >
                     Editar
                   </button>
 
                   <button
                     className="btn btn-danger btn-sm"
-                    onClick={() =>
-                      deleteExistingProduct(p.id).then(fetchProductsAdmin)
-                    }
+                    onClick={() => excluir(p.id)}
+                    disabled={loading}
                   >
                     Excluir
                   </button>

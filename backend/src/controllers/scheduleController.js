@@ -1,5 +1,15 @@
 const scheduleService = require("../services/scheduleService");
 
+// Validação simples para horário: "HH:MM"
+function validarHora(h) {
+  return /^([01]\d|2[0-3]):[0-5]\d$/.test(h);
+}
+
+// Validação simples para data "YYYY-MM-DD"
+function validarData(d) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(d);
+}
+
 module.exports = {
   async listar(req, res) {
     try {
@@ -43,8 +53,27 @@ module.exports = {
 
   async criar(req, res) {
     try {
+      const { date, time, capacity } = req.body;
+
+      // ---------------------- VALIDAÇÕES ----------------------
+
+      if (!date || !validarData(date)) {
+        return res.status(400).json({ error: "Data inválida (formato: YYYY-MM-DD)" });
+      }
+
+      if (!time || !validarHora(time)) {
+        return res.status(400).json({ error: "Horário inválido (formato: HH:MM)" });
+      }
+
+      if (capacity == null || isNaN(Number(capacity)) || Number(capacity) <= 0) {
+        return res.status(400).json({ error: "Capacidade deve ser um número maior que 0." });
+      }
+
+      // ---------------------- CRIAÇÃO ----------------------
+
       const slot = await scheduleService.criar(req.body);
       res.status(201).json(slot);
+
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: "Erro ao criar horário" });
@@ -54,10 +83,31 @@ module.exports = {
   async atualizar(req, res) {
     try {
       const { id } = req.params;
+      const { date, time, capacity } = req.body;
+
+      // ---------------------- VALIDAÇÕES ----------------------
+
+      if (date && !validarData(date)) {
+        return res.status(400).json({ error: "Data inválida." });
+      }
+
+      if (time && !validarHora(time)) {
+        return res.status(400).json({ error: "Horário inválido." });
+      }
+
+      if (capacity != null && (isNaN(Number(capacity)) || Number(capacity) <= 0)) {
+        return res.status(400).json({ error: "Capacidade inválida." });
+      }
+
+      // ---------------------- ATUALIZAÇÃO ----------------------
+
       const atualizado = await scheduleService.atualizar(id, req.body);
-      if (!atualizado)
+      if (!atualizado) {
         return res.status(404).json({ error: "Horário não encontrado" });
+      }
+
       res.json(atualizado);
+
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: "Erro ao atualizar horário" });
@@ -68,9 +118,13 @@ module.exports = {
     try {
       const { id } = req.params;
       const ok = await scheduleService.deletar(id);
-      if (!ok)
+
+      if (!ok) {
         return res.status(404).json({ error: "Horário não encontrado" });
+      }
+
       res.status(204).send();
+
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: "Erro ao deletar horário" });

@@ -7,12 +7,8 @@ const PickupSlot = require("../models/PickupSlot");
 module.exports = {
   listarAtivos() {
     return Order.findAll({
-      where: {},
       include: [
-        {
-          model: PickupSlot,
-          as: "pickupSlot",
-        },
+        { model: PickupSlot, as: "pickupSlot" },
         {
           model: OrderItem,
           as: "items",
@@ -27,25 +23,26 @@ module.exports = {
     return this.listarAtivos();
   },
 
-  async criarPedido({
-    studentName,
-    registration,
-    guardianEmail,
-    pickupSlotId,
-    items,
-  }) {
+  async criarPedido({ studentName, registration, guardianEmail, pickupSlotId, items }) {
     const t = await sequelize.transaction();
 
     try {
-      const slot = await PickupSlot.findByPk(pickupSlotId, { transaction: t });
+      // 🔒 Lock pessimista no horário para evitar concorrência
+      const slot = await PickupSlot.findByPk(pickupSlotId, {
+        transaction: t,
+        lock: t.LOCK.UPDATE,
+      });
+
       if (!slot) throw new Error("Horário não encontrado");
 
-      const disponivel = slot.capacity - slot.currentOrders;
-      const totalItens = items.reduce((sum, i) => sum + i.quantity, 0);
-      if (totalItens > disponivel)
-        throw new Error("Não há vagas suficientes nesse horário");
+      // ✔ Capacidade por pedido (1 pedido = 1 vaga)
+      const vagasRestantes = slot.capacity - slot.currentOrders;
 
-      let total = 0;
+      if (vagasRestantes <= 0) {
+        throw new Error("Esse horário já atingiu a capacidade máxima.");
+      }
+
+      // 🔥 Criar o pedido
       const order = await Order.create(
         {
           studentName,
@@ -53,24 +50,30 @@ module.exports = {
           guardianEmail,
           pickupSlotId,
           status: "EM_PREPARACAO",
-          total: 0, // atualizamos depois
+          total: 0,
         },
         { transaction: t }
       );
 
+      let total = 0;
+
+      // 🔒 Validação e lock nos produtos para evitar estoque negativo
       for (const item of items) {
         const product = await Product.findByPk(item.productId, {
           transaction: t,
+          lock: t.LOCK.UPDATE,
         });
-        if (!product) throw new Error("Produto não encontrado");
+
+        if (!product) throw new Error(`Produto não encontrado: ${item.productId}`);
 
         if (product.stock < item.quantity) {
-          throw new Error(`Estoque insuficiente para ${product.name}`);
+          throw new Error(`Estoque insuficiente de ${product.name}`);
         }
 
-        const unitPrice = product.price;
-        total += Number(unitPrice) * item.quantity;
+        const unitPrice = Number(product.price);
+        total += unitPrice * item.quantity;
 
+        // Criar item do pedido
         await OrderItem.create(
           {
             orderId: order.id,
@@ -81,21 +84,25 @@ module.exports = {
           { transaction: t }
         );
 
+        // Atualizar estoque com segurança
         await product.update(
           { stock: product.stock - item.quantity },
           { transaction: t }
         );
       }
 
+      // Atualizar total do pedido
       await order.update({ total }, { transaction: t });
 
+      // ✔ Aumentar currentOrders: 1 pedido = +1
       await slot.update(
-        { currentOrders: slot.currentOrders + totalItens },
+        { currentOrders: slot.currentOrders + 1 },
         { transaction: t }
       );
 
       await t.commit();
       return order;
+
     } catch (err) {
       await t.rollback();
       throw err;
@@ -103,8 +110,8 @@ module.exports = {
   },
 
   async atualizarStatus(id, status) {
-    const order = await Order.findByPk(id);
-    if (!order) return null;
-    return order.update({ status });
+    const pedido = await Order.findByPk(id);
+    if (!pedido) return null;
+    return pedido.update({ status });
   },
 };

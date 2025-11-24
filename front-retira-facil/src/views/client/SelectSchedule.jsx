@@ -22,11 +22,11 @@ export default function SelectSchedule() {
             key={s.id}
             className="btn btn-primary w-100 mb-2"
             onClick={() => {
-              selectSchedule(s);   // 🔥 SALVANDO HORÁRIO NO CONTEXTO
+              selectSchedule(s);   // Salva data + horário corretamente
               navigate("/checkout");
             }}
           >
-            {s.time}
+            {s.date} — {s.time}
           </button>
         ))}
       </div>
