@@ -63,7 +63,6 @@ export default function OrdersAdmin() {
           <tbody>
             {orders.map((o) => (
               <>
-                {/* Linha principal */}
                 <tr key={o.id}>
                   <td>{o.studentName}</td>
                   <td>{o.registration}</td>
@@ -110,7 +109,6 @@ export default function OrdersAdmin() {
                   </td>
                 </tr>
 
-                {/* Itens */}
                 <tr className="order-items-row">
                   <td colSpan="7" style={{ paddingTop: "12px" }}>
                     <div className="order-items-title">Itens do Pedido</div>
@@ -132,7 +130,6 @@ export default function OrdersAdmin() {
                   </td>
                 </tr>
 
-                {/* Divisor */}
                 <tr className="order-divider-row">
                   <td colSpan="7"></td>
                 </tr>

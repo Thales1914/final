@@ -1,11 +1,9 @@
 import api from "./api";
 
-// CLIENTE
 export function getAvailableSchedules() {
   return api.get("/schedules");
 }
 
-// ADMIN
 export function getAllSchedules() {
   return api.get("/schedules/admin");
 }

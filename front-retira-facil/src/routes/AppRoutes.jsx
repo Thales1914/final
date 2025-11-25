@@ -3,14 +3,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
-// CLIENTE
 import Home from "../views/client/Home";
 import Products from "../views/client/Products";
 import SelectSchedule from "../views/client/SelectSchedule";
 import Checkout from "../views/client/Checkout";
 import OrderSuccess from "../views/client/OrderSuccess";
 
-// ADMIN
 import Login from "../views/admin/Login";
 import Dashboard from "../views/admin/Dashboard";
 import ProductsAdmin from "../views/admin/ProductsAdmin";
@@ -26,14 +24,12 @@ export default function AppRoutes() {
 
       <div style={{ minHeight: "80vh" }}>
         <Routes>
-          {/* CLIENTE */}
           <Route path="/" element={<Home />} />
           <Route path="/produtos" element={<Products />} />
           <Route path="/selecionar-horario" element={<SelectSchedule />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/pedido/sucesso" element={<OrderSuccess />} />
 
-          {/* ADMIN */}
           <Route path="/admin/login" element={<Login />} />
 
           <Route

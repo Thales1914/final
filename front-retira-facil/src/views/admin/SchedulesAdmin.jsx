@@ -97,7 +97,6 @@ export default function SchedulesAdmin() {
 
       <h2 className="section-title">Gerenciar Horários</h2>
 
-      {/* FORMULÁRIO */}
       <div className="card-custom">
         <h4 className="mb-3">
           {form.id ? "Editar Horário" : "Novo Horário"}
@@ -160,7 +159,6 @@ export default function SchedulesAdmin() {
         </form>
       </div>
 
-      {/* TABELA */}
       <div className="card-custom">
         <h4 className="mb-3">Horários Existentes {loading && "(atualizando...)"}</h4>
 

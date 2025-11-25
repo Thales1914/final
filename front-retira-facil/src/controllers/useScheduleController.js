@@ -5,7 +5,6 @@ export function useScheduleController() {
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // CLIENTE → Listar horários disponíveis
   async function fetchSchedulesClient() {
     setLoading(true);
     try {
@@ -18,7 +17,6 @@ export function useScheduleController() {
     }
   }
 
-  // ADMIN → Listar todos os horários
   async function fetchSchedulesAdmin() {
     setLoading(true);
     try {
@@ -31,7 +29,6 @@ export function useScheduleController() {
     }
   }
 
-  // ADMIN → Criar horário
   async function createSchedule(data) {
     try {
       await api.post("/schedules", data);
@@ -41,7 +38,6 @@ export function useScheduleController() {
     }
   }
 
-  // ADMIN → Atualizar horário
   async function updateSchedule(id, data) {
     try {
       await api.put(`/schedules/${id}`, data);
@@ -51,7 +47,6 @@ export function useScheduleController() {
     }
   }
 
-  // ADMIN → Deletar horário
   async function deleteSchedule(id) {
     try {
       await api.delete(`/schedules/${id}`);

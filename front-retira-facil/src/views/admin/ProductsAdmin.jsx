@@ -106,7 +106,6 @@ export default function ProductsAdmin() {
 
       <h2 className="section-title">Gerenciar Produtos</h2>
 
-      {/* FORMULÁRIO */}
       <div className="card-custom">
         <h4 className="mb-3">
           {form.id ? "Editar Produto" : "Novo Produto"}
@@ -191,7 +190,6 @@ export default function ProductsAdmin() {
         </form>
       </div>
 
-      {/* LISTA */}
       <div className="card-custom">
         <h4 className="mb-3">Lista de Produtos</h4>
 

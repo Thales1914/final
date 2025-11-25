@@ -4,7 +4,6 @@ import { useAuth } from "../../context/AuthContext";
 export default function Dashboard() {
   const { token } = useAuth();
 
-  // Previne acesso direto sem login
   if (!token) {
     return (
       <div className="container page-area fade-in">

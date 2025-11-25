@@ -14,7 +14,7 @@ export function useAuthController() {
 
       const token = response.data.token;
 
-      return token; // RETORNAR O TOKEN AQUI !!!
+      return token;
     } catch (err) {
       setError("Usuário ou senha inválidos");
       return null;

@@ -4,27 +4,36 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => {
-    return localStorage.getItem("token") || null;
+    return sessionStorage.getItem("token") || null;
   });
 
   const [isAuthenticated, setIsAuthenticated] = useState(!!token);
 
   function login(tokenRecebido) {
+    sessionStorage.setItem("token", tokenRecebido);
     setToken(tokenRecebido);
-    localStorage.setItem("token", tokenRecebido);
     setIsAuthenticated(true);
   }
 
   function logout() {
+    sessionStorage.removeItem("token");
     setToken(null);
-    localStorage.removeItem("token");
     setIsAuthenticated(false);
   }
 
-  // Se o token sumir, atualizar estado
   useEffect(() => {
     setIsAuthenticated(!!token);
   }, [token]);
+
+  // Deslogar automaticamente ao fechar a aba
+  useEffect(() => {
+    const handleUnload = () => {
+      sessionStorage.removeItem("token");
+    };
+
+    window.addEventListener("beforeunload", handleUnload);
+    return () => window.removeEventListener("beforeunload", handleUnload);
+  }, []);
 
   return (
     <AuthContext.Provider value={{ token, login, logout, isAuthenticated }}>

@@ -1,33 +1,33 @@
 import axios from "axios";
-import { useAuth } from "../context/AuthContext";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/api", // você pode mudar para env futuramente
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
 });
 
-// Interceptor GLOBAL para erros 401
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      alert("Sessão expirada. Faça login novamente.");
-      localStorage.removeItem("token");
-      window.location.href = "/admin";
-    }
-    return Promise.reject(error);
-  }
-);
-
-// Interceptor para adicionar token
+// Intercepta requisição e adiciona o token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
     return config;
   },
   (error) => Promise.reject(error)
+);
+
+// Intercepta respostas 401 (sessão expirada)
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      alert("Sua sessão expirou. Faça login novamente.");
+
+      sessionStorage.removeItem("token");
+      window.location.href = "/admin";
+    }
+    return Promise.reject(error);
+  }
 );
 
 export default api;

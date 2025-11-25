@@ -42,7 +42,6 @@ export default function Checkout() {
 
     const data = Object.fromEntries(new FormData(e.target));
 
-    // 🔥 FORMATO EXATO QUE O BACKEND ESPERA
     data.items = cart.map(item => ({
       productId: item.id,
       quantity: item.quantity
@@ -65,7 +64,6 @@ export default function Checkout() {
 
       <h2 className="section-title">Finalizar Pedido</h2>
 
-      {/* ITENS */}
       <div className="card-custom mb-4">
         <h4 className="mb-3">Itens do Carrinho</h4>
 
@@ -78,7 +76,6 @@ export default function Checkout() {
             </div>
             <div className="d-flex align-items-center gap-3">
 
-              {/* 🔥 CORREÇÃO: valor total = preço * quantidade */}
               <span>R$ {(item.price * item.quantity).toFixed(2)}</span>
 
               <button className="btn btn-danger btn-sm" onClick={() => removeFromCart(item.id)}>
@@ -89,7 +86,6 @@ export default function Checkout() {
         ))}
       </div>
 
-      {/* HORÁRIOS */}
       <div className="card-custom mb-4">
         <h4 className="mb-3">Selecione um Horário</h4>
 
@@ -104,7 +100,6 @@ export default function Checkout() {
         ))}
       </div>
 
-      {/* FORMULÁRIO */}
       <div className="card-custom">
         <h4 className="mb-3">Seus Dados</h4>
 

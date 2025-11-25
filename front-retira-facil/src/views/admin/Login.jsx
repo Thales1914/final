@@ -31,7 +31,7 @@ export default function Login() {
       const token = await apiLogin(form.username, form.password);
 
       if (token) {
-        saveToken(token);
+        saveToken(token); // SALVA NO sessionStorage
         navigate("/admin/dashboard");
       } else {
         alert("Usuário ou senha inválidos.");
@@ -48,7 +48,6 @@ export default function Login() {
       <h2 className="mb-4">Login Admin</h2>
 
       <form onSubmit={handleSubmit}>
-
         <div className="mb-3">
           <label>Usuário</label>
           <input

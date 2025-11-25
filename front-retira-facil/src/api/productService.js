@@ -1,11 +1,9 @@
 import api from "./api";
 
-// CLIENTE
 export function getProducts() {
   return api.get("/products");
 }
 
-// ADMIN
 export function getAllProductsAdmin() {
   return api.get("/products/admin");
 }

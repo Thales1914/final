@@ -13,13 +13,12 @@ export function useOrderController() {
     }
   }
 
-  // Corrigido + tratamento de erro
   async function createOrderController(orderData) {
     try {
       return await createOrder(orderData);
     } catch (err) {
       alert(err.response?.data?.error || "Erro ao criar pedido.");
-      throw err; // mantém erro para o componente parar fluxo se quiser
+      throw err;
     }
   }
 

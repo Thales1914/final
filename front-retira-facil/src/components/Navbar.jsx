@@ -23,7 +23,6 @@ export default function Navbar() {
 
         <ul className="navbar-nav ms-auto">
 
-          {/* Link simples para o carrinho */}
           <li className="nav-item">
             <Link className="nav-link" to="/checkout">
               Carrinho ({cart.length})

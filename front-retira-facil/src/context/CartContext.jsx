@@ -6,16 +6,12 @@ export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
   const [schedule, setSchedule] = useState(null);
 
-  // -------------------------------------------------------
-  // ADICIONAR PRODUTO — sem alert! Retorna true/false
-  // -------------------------------------------------------
   function addToCart(product) {
     const exists = cart.find(item => item.id === product.id);
 
-    // Já existe no carrinho
     if (exists) {
       if (exists.quantity >= product.stock) {
-        return false; // Estoque insuficiente
+        return false;
       }
 
       setCart(prev =>
@@ -26,10 +22,9 @@ export function CartProvider({ children }) {
         )
       );
 
-      return true; // sucesso
+      return true;
     }
 
-    // Primeiro item
     if (product.stock <= 0) {
       return false;
     }
@@ -38,9 +33,6 @@ export function CartProvider({ children }) {
     return true;
   }
 
-  // -------------------------------------------------------
-  // REMOVER UMA UNIDADE
-  // -------------------------------------------------------
   function removeFromCart(id) {
     setCart(prev =>
       prev

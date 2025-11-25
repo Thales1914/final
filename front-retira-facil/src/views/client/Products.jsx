@@ -118,7 +118,7 @@ export default function Products() {
                   onClick={() => {
                     if (esgotado) return;
 
-                    const ok = addToCart(p); // << === alteração IMPORTANTE
+                    const ok = addToCart(p);
                     if (!ok) {
                       alert("Estoque insuficiente para adicionar mais unidades.");
                       return;
