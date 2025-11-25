@@ -6,22 +6,51 @@ export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
   const [schedule, setSchedule] = useState(null);
 
+  // -------------------------------------------------------
+  // ADICIONAR PRODUTO — sem alert! Retorna true/false
+  // -------------------------------------------------------
   function addToCart(product) {
-    setCart((prev) => {
-      const exists = prev.find((item) => item.id === product.id);
-      if (exists) {
-        return prev.map((item) =>
+    const exists = cart.find(item => item.id === product.id);
+
+    // Já existe no carrinho
+    if (exists) {
+      if (exists.quantity >= product.stock) {
+        return false; // Estoque insuficiente
+      }
+
+      setCart(prev =>
+        prev.map(item =>
           item.id === product.id
             ? { ...item, quantity: item.quantity + 1 }
             : item
-        );
-      }
-      return [...prev, { ...product, quantity: 1 }];
-    });
+        )
+      );
+
+      return true; // sucesso
+    }
+
+    // Primeiro item
+    if (product.stock <= 0) {
+      return false;
+    }
+
+    setCart(prev => [...prev, { ...product, quantity: 1 }]);
+    return true;
   }
 
+  // -------------------------------------------------------
+  // REMOVER UMA UNIDADE
+  // -------------------------------------------------------
   function removeFromCart(id) {
-    setCart((prev) => prev.filter((item) => item.id !== id));
+    setCart(prev =>
+      prev
+        .map(item =>
+          item.id === id
+            ? { ...item, quantity: item.quantity - 1 }
+            : item
+        )
+        .filter(item => item.quantity > 0)
+    );
   }
 
   function clearCart() {

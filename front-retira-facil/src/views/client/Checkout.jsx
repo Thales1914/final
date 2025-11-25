@@ -77,7 +77,10 @@ export default function Checkout() {
               {item.name} <span className="text-muted">(x{item.quantity})</span>
             </div>
             <div className="d-flex align-items-center gap-3">
-              <span>R$ {Number(item.price).toFixed(2)}</span>
+
+              {/* 🔥 CORREÇÃO: valor total = preço * quantidade */}
+              <span>R$ {(item.price * item.quantity).toFixed(2)}</span>
+
               <button className="btn btn-danger btn-sm" onClick={() => removeFromCart(item.id)}>
                 Remover
               </button>
