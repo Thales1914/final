@@ -105,13 +105,31 @@ export default function Checkout() {
 
         <form onSubmit={finalizar}>
           <label>Nome do Aluno</label>
-          <input name="studentName" className="form-control" required />
+          <input
+            name="studentName"
+            className="form-control"
+            required
+            pattern="^[A-Za-zÀ-ÿ ]+$"
+            title="O nome deve conter apenas letras."
+          />
 
           <label className="mt-3">Matrícula</label>
-          <input name="registration" className="form-control" required />
+          <input
+            name="registration"
+            className="form-control"
+            required
+            pattern="^[0-9]+$"
+            title="A matrícula deve conter apenas números."
+          />
 
           <label className="mt-3">Email do Responsável</label>
-          <input name="guardianEmail" type="email" className="form-control" required />
+          <input
+            name="guardianEmail"
+            type="email"
+            className="form-control"
+            required
+            title="Digite um e-mail válido."
+          />
 
           <label className="mt-3">Horário Selecionado</label>
           <input
